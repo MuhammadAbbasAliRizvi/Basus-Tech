@@ -1,633 +1,403 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>United Restaurants - Authentic Pakistani Cuisine</title>
-    <meta name="description" content="Experience authentic Pakistani cuisine at United Restaurants. Multiple locations across Pakistan offering dine-in, takeaway, and delivery services.">
-    
-    <!-- External Libraries -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- link css -->
-    <link rel="stylesheet" href="./style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>Make Market • SaaS для нативных потоков</title>
+  <!-- Google Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
+  <style>
+    /* ===== CSS VARIABLES (Light & Dark) ===== */
+    :root {
+      --bg-primary: #ffffff;
+      --bg-secondary: #faf9ff;
+      --text-primary: #1e1b2b;
+      --text-secondary: #4a455b;
+      --glass-bg: rgba(255, 255, 255, 0.75);
+      --glass-border: rgba(255, 255, 255, 0.5);
+      --card-shadow: 0 15px 35px -10px rgba(0,0,0,0.08), 0 5px 15px -5px rgba(0,0,0,0.02);
+      --shadow-elevated: 0 25px 40px -18px rgba(107,33,168,0.25), 0 10px 20px -8px rgba(219,39,119,0.1);
+      --gradient-start: #7c3aed;
+      --gradient-end: #ec4899;
+      --navbar-blur: 12px;
+      --transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    [data-theme="dark"] {
+      --bg-primary: #0f0b1a;
+      --bg-secondary: #1a1428;
+      --text-primary: #f0eaff;
+      --text-secondary: #c9b8f0;
+      --glass-bg: rgba(20, 15, 30, 0.7);
+      --glass-border: rgba(180, 130, 255, 0.2);
+      --card-shadow: 0 20px 30px -10px rgba(0,0,0,0.5), 0 8px 15px -5px rgba(0,0,0,0.2);
+      --shadow-elevated: 0 25px 40px -18px #2d1b4e, 0 10px 20px -8px #4c1d5e;
+      --navbar-blur: 16px;
+    }
+
+    /* ===== RESET & BASE ===== */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.5;
+      overflow-x: hidden;
+      transition: background 0.3s, color 0.2s;
+    }
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: var(--bg-secondary); }
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, var(--gradient-start), var(--gradient-end));
+      border-radius: 20px;
+      border: 2px solid var(--bg-primary);
+    }
+
+    /* ===== PROGRESS BAR ===== */
+    .progress-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 2px;
+      width: 0%;
+      background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
+      z-index: 10000;
+      transition: width 0.1s ease;
+      box-shadow: 0 0 12px #ec4899aa;
+    }
+
+    /* ===== UTILITIES ===== */
+    .container { width: 92%; max-width: 1400px; margin: 0 auto; }
+    .section-fade { opacity: 0; transform: translateY(15px); transition: opacity 0.8s, transform 0.8s; }
+    .section-fade.visible { opacity: 1; transform: translateY(0); }
+
+    /* Shimmer text effect */
+    .shimmer {
+      background: linear-gradient(90deg, var(--text-primary) 0%, #a78bfa 40%, #f472b6 60%, var(--text-primary) 80%);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      animation: shimmer 4s linear infinite;
+    }
+    @keyframes shimmer { 0% { background-position: 0% center; } 100% { background-position: 200% center; } }
+
+    /* ===== BEM NAMING ===== */
+    .navbar { position: sticky; top: 0; width: 100%; z-index: 1000; backdrop-filter: blur(var(--navbar-blur)); background: var(--glass-bg); border-bottom: 1px solid var(--glass-border); transition: var(--transition); }
+    .navbar__container { display: flex; align-items: center; justify-content: space-between; padding: 0.8rem 0; }
+    .navbar__logo { font-size: 1.9rem; font-weight: 700; background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end)); -webkit-background-clip: text; background-clip: text; color: transparent; text-decoration: none; }
+    .navbar__menu { display: flex; list-style: none; gap: 2.5rem; }
+    .navbar__link { text-decoration: none; font-weight: 500; color: var(--text-primary); transition: color 0.2s; }
+    .navbar__link:hover { color: var(--gradient-start); }
+    .navbar__theme-toggle { background: none; border: none; font-size: 1.6rem; cursor: pointer; color: var(--text-primary); margin-left: 1.5rem; display: flex; }
+    .navbar__toggle { display: none; font-size: 1.8rem; cursor: pointer; color: var(--gradient-start); }
+
+    /* Mesh Gradient Hero */
+    .hero {
+      width: 92%; margin: 10px auto 0; border-radius: 48px; min-height: 700px;
+      background: radial-gradient(circle at 20% 30%, #a78bfa80 0%, transparent 40%),
+                  radial-gradient(circle at 80% 70%, #f472b680 0%, transparent 45%),
+                  radial-gradient(circle at 40% 80%, #c084fc 0%, transparent 50%),
+                  linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+      background-blend-mode: overlay;
+      position: relative; overflow: hidden;
+      box-shadow: var(--shadow-elevated);
+      animation: meshMove 14s infinite alternate ease-in-out;
+    }
+    @keyframes meshMove {
+      0% { background-position: 0% 0%, 100% 100%, 50% 80%; background-size: 100% 100%, 100% 100%, 100% 100%; }
+      100% { background-position: 5% 10%, 90% 60%, 30% 90%; background-size: 120% 120%, 110% 110%, 130% 130%; }
+    }
+    .hero__overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.08); pointer-events: none; }
+    .hero__grid { display: grid; grid-template-columns: 1.1fr 1fr; align-items: center; padding: 3rem 5%; height: 100%; position: relative; z-index: 3; }
+    .hero__content { color: white; }
+    .hero__badge { display: inline-block; backdrop-filter: blur(8px); background: rgba(255,255,255,0.2); padding: 0.3rem 1.2rem; border-radius: 40px; font-size: 0.9rem; font-weight: 500; margin-bottom: 1.5rem; border: 1px solid rgba(255,255,255,0.3); }
+    .hero__title { font-size: 3.5rem; font-weight: 700; line-height: 1.2; margin-bottom: 1.2rem; text-shadow: 0 8px 20px rgba(0,0,0,0.1); }
+    .hero__desc { font-size: 1.2rem; opacity: 0.95; margin-bottom: 2rem; max-width: 550px; }
+    .hero__actions { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 2rem; }
+    .btn { padding: 0.9rem 2rem; border-radius: 60px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s; border: none; cursor: pointer; font-size: 1rem; background: white; color: #7c3aed; box-shadow: 0 12px 20px -8px rgba(0,0,0,0.2); }
+    .btn--outline { background: transparent; border: 1.5px solid rgba(255,255,255,0.7); color: white; box-shadow: none; }
+    .btn--outline:hover { background: rgba(255,255,255,0.1); }
+    .btn--magnetic { transition: transform 0.15s; }
+    .hero__trust { display: flex; gap: 1.5rem; font-size: 0.95rem; }
+
+    /* Mockups */
+    .hero__mockups { display: flex; justify-content: center; align-items: center; position: relative; }
+    .mockup { width: 190px; filter: drop-shadow(0 30px 25px rgba(0,0,0,0.2)); transition: transform 0.1s ease-out; }
+    .mockup--float { animation: float 6s infinite; }
+    .mockup--delay { animation: float 6s infinite reverse; margin-left: -30px; }
+    .mockup__phone { background: #15121c; border-radius: 38px; padding: 12px; aspect-ratio: 9/18; border: 2px solid rgba(255,255,255,0.2); backdrop-filter: blur(2px); }
+    .mockup__screen { background: white; height: 100%; border-radius: 28px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #7c3aed; background: linear-gradient(145deg, #f5f0ff, #ffffff); }
+    .mockup__screen i { font-size: 3rem; color: #db2777; }
+
+    /* Marquee */
+    .marquee { width: 92%; margin: 40px auto; overflow: hidden; background: var(--glass-bg); backdrop-filter: blur(10px); border-radius: 60px; padding: 1rem 0; border: 1px solid var(--glass-border); }
+    .marquee__track { display: flex; gap: 3rem; animation: scrollMarquee 25s linear infinite; width: max-content; }
+    .marquee__item { font-size: 1.5rem; font-weight: 600; color: var(--text-primary); opacity: 0.8; display: flex; align-items: center; gap: 8px; white-space: nowrap; }
+    @keyframes scrollMarquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+    /* Secondary hero */
+    .hero-second { width: 92%; margin: 40px auto; border-radius: 40px; background: var(--glass-bg); backdrop-filter: blur(14px); border: 1px solid var(--glass-border); box-shadow: var(--card-shadow); }
+    .hero-second__grid { display: grid; grid-template-columns: 1.2fr 0.8fr; align-items: center; padding: 2.5rem 5%; }
+    .hero-second__title { font-size: 2.2rem; font-weight: 700; margin-bottom: 1rem; background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .hero-second__mockup { width: 220px; margin-left: auto; }
+
+    /* Main content */
+    .features { width: 80%; margin: 80px auto; }
+    .section-title { text-align: center; font-size: 2.8rem; font-weight: 700; margin-bottom: 3rem; }
+    .features__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; }
+    .feature-card { display: contents; }
+    .card-img { background: linear-gradient(145deg, #f1e7fe20, var(--glass-bg)); backdrop-filter: blur(8px); border-radius: 32px; padding: 2rem; display: flex; justify-content: center; box-shadow: var(--card-shadow); border: 1px solid var(--glass-border); transition: var(--transition); }
+    .card-text { background: var(--glass-bg); backdrop-filter: blur(12px); border-radius: 32px; padding: 2.5rem 2rem; box-shadow: var(--card-shadow); border: 1px solid var(--glass-border); }
+    .card-text h3 { font-size: 1.8rem; margin-bottom: 1rem; }
+    .btn--ghost { border: 1.5px solid var(--gradient-start); color: var(--gradient-start); background: transparent; padding: 0.6rem 1.6rem; border-radius: 40px; font-weight: 600; }
+
+    /* Extra grid */
+    .extra { width: 80%; margin: 80px auto; }
+    .card-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 2rem; }
+    .info-card { background: var(--glass-bg); backdrop-filter: blur(12px); padding: 2rem 1.5rem; border-radius: 32px; box-shadow: var(--card-shadow); border: 1px solid var(--glass-border); transition: var(--transition); text-align: center; }
+    .info-card:hover { transform: translateY(-8px); box-shadow: var(--shadow-elevated); }
+    .info-card__icon { font-size: 2.5rem; background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+    /* FAQ Accordion */
+    .faq { width: 80%; margin: 80px auto; }
+    .accordion { border-radius: 28px; overflow: hidden; }
+    .accordion__item { background: var(--glass-bg); backdrop-filter: blur(10px); border-bottom: 1px solid var(--glass-border); }
+    .accordion__header { padding: 1.5rem 2rem; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-weight: 600; font-size: 1.2rem; }
+    .accordion__content { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; background: var(--bg-secondary); }
+    .accordion__content-inner { padding: 0 2rem 1.5rem; color: var(--text-secondary); }
+    .accordion__item.active .accordion__content { max-height: 200px; }
+
+    /* Footer */
+    .footer { background: var(--glass-bg); backdrop-filter: blur(10px); padding: 2.5rem 5%; border-radius: 40px 40px 0 0; margin-top: 60px; border-top: 1px solid var(--glass-border); }
+    .footer__social { display: flex; gap: 1.8rem; font-size: 1.6rem; }
+    .footer__social a { color: var(--text-primary); }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .hero__title { font-size: 2.8rem; }
+      .features__grid { gap: 1.5rem; }
+      .card-grid { grid-template-columns: repeat(2,1fr); }
+    }
+    @media (max-width: 768px) {
+      .navbar__menu { display: none; flex-direction: column; background: var(--glass-bg); backdrop-filter: blur(20px); position: absolute; top: 70px; left: 0; width: 100%; padding: 1.5rem; border-radius: 0 0 28px 28px; }
+      .navbar__menu.active { display: flex; }
+      .navbar__toggle { display: block; }
+      .hero__grid { grid-template-columns: 1fr; text-align: center; }
+      .hero-second__grid { grid-template-columns: 1fr; }
+      .features__grid { grid-template-columns: 1fr; }
+      .features, .extra, .faq { width: 92%; }
+      .card-grid { grid-template-columns: 1fr; }
+    }
+  </style>
 </head>
 <body>
-    <!-- Header Section -->
-    <header class="header">
-        <div class="container">
-            <div class="header-content">
-                <div class="logo">
-                    <h1 style="color: var(--primary-color); margin: 0; font-size: 2rem;">UNITED</h1>
-                </div>
-                
-                <nav class="main-nav">
-                    <ul class="nav-list">
-                        <li><a href="./menu.html">Menu</a></li>
-                        <li><a href="#about">About Us</a></li>
-                        <li><a href="#locations">Locations</a></li>
-                        <li><a href="#publications">Publications</a></li>
-                        <li><a href="#social">Social Feed</a></li>
-                    </ul>
-                </nav>
-                
-                <div class="header-actions">
-                    <button class="btn franchise-btn">Get a Franchise</button>
-                    <button class="btn order-btn">
-                        Order Online <i class="fas fa-arrow-right"></i>
-                    </button>
-                </div>
-                
-                <div class="menu-toggle">
-                    <i class="fas fa-bars"></i>
-                </div>
-            </div>
+  <div class="progress-bar" id="progressBar"></div>
+
+  <!-- Navbar (Glass) -->
+  <nav class="navbar" id="navbar">
+    <div class="container navbar__container">
+      <a href="#" class="navbar__logo">Make Market</a>
+      <ul class="navbar__menu" id="navMenu">
+        <li><a href="#hero" class="navbar__link">Главная</a></li>
+        <li><a href="#dealer" class="navbar__link">Дилер</a></li>
+        <li><a href="#features" class="navbar__link">Возможности</a></li>
+        <li><a href="#faq" class="navbar__link">FAQ</a></li>
+      </ul>
+      <div style="display: flex; align-items: center;">
+        <button class="navbar__theme-toggle" id="themeToggle" aria-label="темная/светлая тема">
+          <i class="ri-moon-line" id="themeIcon"></i>
+        </button>
+        <div class="navbar__toggle" id="navToggle"><i class="ri-menu-line"></i></div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero with Mesh Gradient -->
+  <section class="hero section-fade" id="hero">
+    <div class="hero__overlay"></div>
+    <div class="hero__grid container">
+      <div class="hero__content">
+        <span class="hero__badge">готовое решение для SaaS</span>
+        <h1 class="hero__title shimmer">Make Market<br>нативные потоки</h1>
+        <p class="hero__desc">Расширенный кабинет дилера — вся аналитика в одном месте. <strong>2,000 ₽</strong></p>
+        <div class="hero__actions">
+          <a href="#" class="btn btn--magnetic magnetic">Быстрое оформление <i class="ri-arrow-right-line"></i></a>
+          <a href="#" class="btn btn--outline btn--magnetic magnetic">Подробнее о 1С</a>
         </div>
-    </header>
-
-    <!-- Hero Banner with Slider -->
-    <section class="hero-banner" id="home">
-        <div class="slider-container">
-            <div class="slider">
-                <!-- Slide 1 -->
-                <div class="slide">
-                    <img src="./pics/yoad-shejtman-WctPQbz7W3E-unsplash.jpg" alt="Restaurant Interior">
-                    <div class="hero-text">
-                        <h1>Welcome to United Restaurant</h1>
-                        <p>Experience the authentic taste of Pakistan</p>
-                        <button class="btn btn-primary">View Our Menu</button>
-                    </div>
-                </div>
-                
-                <!-- Slide 2 -->
-                <div class="slide">
-                    <img src="./pics/Cheesy French Fries Creative Ads Poster Idea.jpg" alt="Delicious Food">
-                    <div class="hero-text">
-                        <h1>Authentic Pakistani Cuisine</h1>
-                        <p>Traditional recipes passed down through generations</p>
-                        <button class="btn btn-primary">Order Now</button>
-                    </div>
-                </div>
-                
-                <!-- Slide 3 -->
-                <div class="slide">
-                    <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="Fine Dining Experience">
-                    <div class="hero-text">
-                        <h1>Fine Dining Experience</h1>
-                        <p>Elegant ambiance with traditional Pakistani hospitality</p>
-                        <button class="btn btn-primary">Book a Table</button>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Slider Controls -->
-            <button class="slider-arrow prev">
-                <i class="fas fa-chevron-left"></i>
-            </button>
-            <button class="slider-arrow next">
-                <i class="fas fa-chevron-right"></i>
-            </button>
-            
-            <div class="slider-controls">
-                <div class="slider-dot active"></div>
-                <div class="slider-dot"></div>
-                <div class="slider-dot"></div>
-            </div>
+      </div>
+      <div class="hero__mockups" id="mockupParallax">
+        <div class="mockup mockup--float" data-speed="0.03">
+          <div class="mockup__phone"><div class="mockup__screen"><i class="ri-store-2-line"></i><span>Магазин</span></div></div>
         </div>
-    </section>
-
-    <!-- Brands Section -->
-    <section class="brands-section" id="brands">
-        <div class="container">
-            <div class="section-header">
-                <h2>Welcome to <span>United</span> Restaurants!</h2>
-                <h3>Our Brands</h3>
-                <p>Please click our brands below for further information, reservations or to order online!</p>
-            </div>
-            
-            <div class="brands-grid">
-                <div class="brand-card">
-                    <div class="brand-image">
-                        <img src="./pics/Restaurant Branding.jpg" alt="United Restaurant">
-                    </div>
-                    <div class="brand-info">
-                        <h4>United Restaurant</h4>
-                        <p>Fine dining experience with authentic Pakistani cuisine</p>
-                        <button class="btn">Order Now</button>
-                    </div>
-                </div>
-                
-                <div class="brand-card">
-                    <div class="brand-image">
-                        <img src="./pics/yoad-shejtman-WctPQbz7W3E-unsplash.jpg" alt="United Biryani">
-                    </div>
-                    <div class="brand-info">
-                        <h4>United Biryani</h4>
-                        <p>Specializing in authentic Pakistani biryani</p>
-                        <button class="btn">Order Now</button>
-                    </div>
-                </div>
-                
-                <div class="brand-card">
-                    <div class="brand-image">
-                        <img src="./pics/yansi-keim-SJGem633mvA-unsplash.jpg" alt="United Fastfood">
-                    </div>
-                    <div class="brand-info">
-                        <h4>United Fastfood</h4>
-                        <p>Quick service restaurant for on-the-go meals</p>
-                        <button class="btn">Order Now</button>
-                    </div>
-                </div>
-            </div>
+        <div class="mockup mockup--delay" data-speed="-0.04">
+          <div class="mockup__phone"><div class="mockup__screen" style="background:#1e1b2b; color:white;"><i class="ri-dashboard-line"></i><span>Кабинет</span></div></div>
         </div>
-    </section>
+      </div>
+    </div>
+  </section>
 
-    <!-- Franchise Locations -->
-    <section class="franchise-locations" id="locations">
-        <div class="container">
-            <div class="section-header">
-                <h1>United Restaurant</h1>
-                <h2>Restaurant Franchises</h2>
-                <p>Each of our franchises are individually managed. For further details, kindly contact them directly.</p>
-            </div>
+  <!-- Trust Marquee -->
+  <div class="marquee">
+    <div class="marquee__track">
+      <span class="marquee__item"><i class="ri-amazon-fill"></i> Amazon</span>
+      <span class="marquee__item"><i class="ri-microsoft-fill"></i> Microsoft</span>
+      <span class="marquee__item"><i class="ri-google-fill"></i> Google Cloud</span>
+      <span class="marquee__item"><i class="ri-spotify-fill"></i> Spotify</span>
+      <span class="marquee__item"><i class="ri-slack-fill"></i> Slack</span>
+      <span class="marquee__item"><i class="ri-shopify-fill"></i> Shopify</span>
+      <!-- дублируем для бесшовности -->
+      <span class="marquee__item"><i class="ri-amazon-fill"></i> Amazon</span>
+      <span class="marquee__item"><i class="ri-microsoft-fill"></i> Microsoft</span>
+    </div>
+  </div>
 
-            <!-- Islamabad Location -->
-            <div class="location-card">
-                <div class="location-info">
-                    <div class="city-tag">Islamabad</div>
-                    <h3><span>United</span> Restaurant</h3>
-                    <div class="contact-info">
-                        <p><i class="fas fa-map-marker-alt"></i> Plot# 55, Shabbir Plaza, Blue Area, F-6, Islamabad</p>
-                        <p><i class="fas fa-phone"></i> Ph: 051-2604904-6</p>
-                    </div>
-                    <button class="btn direction-btn">
-                        Get Directions <i class="fas fa-arrow-right"></i>
-                    </button>
-                </div>
-                <div class="location-image">
-                    <img src="./pics/new5.png" alt="Islamabad Branch">
-                </div>
-            </div>
+  <!-- Secondary Hero Glass -->
+  <section class="hero-second section-fade" id="dealer">
+    <div class="hero-second__grid container">
+      <div class="hero-second__content">
+        <h2 class="hero-second__title"><i class="ri-shopping-cart-2-line"></i> Личный кабинет дилера</h2>
+        <p>Вся информация о заказах, наличные, оплата на складе — в одном окне. Двухсторонняя синхронизация с 1С.</p>
+        <a href="#" class="btn btn--ghost magnetic" style="margin-top:1.5rem;">Далее →</a>
+      </div>
+      <div class="hero-second__mockup mockup floating-subtle">
+        <div class="mockup__phone"><div class="mockup__screen"><i class="ri-database-2-line"></i>1С синхронизация</div></div>
+      </div>
+    </div>
+  </section>
 
-            <!-- Faisalabad Location -->
-            <div class="location-card reverse">
-                <div class="location-image">
-                    <img src="./pics/alexander-fastovets-AzWGBFenLyY-unsplash.jpg" alt="Faisalabad Branch">
-                </div>
-                <div class="location-info">
-                    <div class="city-tag">Faisalabad</div>
-                    <h3><span>United</span> Restaurant</h3>
-                    <div class="contact-info">
-                        <p><i class="fas fa-map-marker-alt"></i> 4-Kohinoor City, Faisalabad</p>
-                        <p><i class="fas fa-phone"></i> Ph: 041-8711404</p>
-                    </div>
-                    <button class="btn direction-btn">
-                        Get Directions <i class="fas fa-arrow-right"></i>
-                    </button>
-                </div>
-            </div>
+  <!-- Main content 4 blocks -->
+  <section class="features section-fade" id="features">
+    <h2 class="section-title shimmer">Тесная интеграция и скорость</h2>
+    <div class="features__grid">
+      <div class="card-img"><div class="mockup" style="width:180px"><div class="mockup__phone"><div class="mockup__screen"><i class="ri-flashlight-fill"></i></div></div></div></div>
+      <div class="card-text"><h3>Быстрое оформление</h3><p>Самостоятельно в день сбора данных получите наличные, оплатите товары.</p><a href="#" class="btn btn--ghost magnetic">Подробнее</a></div>
+      <div class="card-img"><div class="mockup" style="width:180px"><div class="mockup__phone"><div class="mockup__screen"><i class="ri-refresh-line"></i></div></div></div></div>
+      <div class="card-text"><h3>Двухсторонняя синхронизация 1С</h3><p>Тесное подключение, актуальные данные в реальном времени.</p><a href="#" class="btn btn--ghost magnetic">Документация</a></div>
+    </div>
+  </section>
 
-            <!-- Bahawalpur Location -->
-            <div class="location-card">
-                <div class="location-info">
-                    <div class="city-tag">Bahawalpur</div>
-                    <h3><span>United</span> Restaurant</h3>
-                    <div class="contact-info">
-                        <p><i class="fas fa-map-marker-alt"></i> D.C Chowk, opposite Commissioner House, Bahawalpur</p>
-                        <p><i class="fas fa-phone"></i> Ph: 062-2740271-2</p>
-                    </div>
-                    <button class="btn direction-btn">
-                        Get Directions <i class="fas fa-arrow-right"></i>
-                    </button>
-                </div>
-                <div class="location-image">
-                    <img src="./pics/Restaurant Branding.jpg" alt="Bahawalpur Branch">
-                </div>
-            </div>
-        </div>
-    </section>
+  <!-- Extra cards -->
+  <section class="extra section-fade">
+    <h2 class="section-title shimmer">Почему выбирают Make Market</h2>
+    <div class="card-grid">
+      <div class="info-card"><div class="info-card__icon"><i class="ri-flashlight-fill"></i></div><h4>Нативные потоки</h4><p>Готовые решения для магазинов.</p></div>
+      <div class="info-card"><div class="info-card__icon"><i class="ri-smartphone-fill"></i></div><h4>Мобильные мокапы</h4><p>Интуитивный интерфейс.</p></div>
+      <div class="info-card"><div class="info-card__icon"><i class="ri-shield-check-fill"></i></div><h4>Безопасность</h4><p>Все транзакции защищены.</p></div>
+      <div class="info-card"><div class="info-card__icon"><i class="ri-bar-chart-2-fill"></i></div><h4>Аналитика</h4><p>Отчёты в реальном времени.</p></div>
+    </div>
+  </section>
 
-    <!-- Express Franchises -->
-    <section class="express-franchises">
-        <div class="container">
-            <div class="section-header">
-                <h2>United Restaurant</h2>
-                <h3>Express Franchises</h3>
-            </div>
-            
-            <div class="express-grid">
-                <!-- Malir Location -->
-                <div class="express-card">
-                    <img src="./pics/new5.png" alt="Malir Express Branch">
-                    <div class="card-body">
-                        <div class="city-tag">Malir</div>
-                        <h4><span>United</span> Biryani</h4>
-                        <div class="contact-info">
-                            <p><i class="fas fa-map-marker-alt"></i> 39-z Phase III, Malir, Karachi</p>
-                            <p><i class="fas fa-phone"></i> Ph: 03212997056</p>
-                        </div>
-                        <button class="btn direction-btn">
-                            Get Directions <i class="fas fa-arrow-right"></i>
-                        </button>
-                    </div>
-                </div>
+  <!-- FAQ Accordion -->
+  <section class="faq section-fade" id="faq">
+    <h2 class="section-title shimmer">Часто задаваемые вопросы</h2>
+    <div class="accordion">
+      <div class="accordion__item">
+        <div class="accordion__header">Как работает синхронизация с 1С? <i class="ri-arrow-down-s-line"></i></div>
+        <div class="accordion__content"><div class="accordion__content-inner">Данные обновляются в обе стороны мгновенно через API.</div></div>
+      </div>
+      <div class="accordion__item">
+        <div class="accordion__header">Можно ли оплатить наличными? <i class="ri-arrow-down-s-line"></i></div>
+        <div class="accordion__content"><div class="accordion__content-inner">Да, в личном кабинете доступна опция наличного расчёта на складе.</div></div>
+      </div>
+      <div class="accordion__item">
+        <div class="accordion__header">Есть ли мобильное приложение? <i class="ri-arrow-down-s-line"></i></div>
+        <div class="accordion__content"><div class="accordion__content-inner">Веб-версия полностью адаптивна, PWA поддерживается.</div></div>
+      </div>
+    </div>
+  </section>
 
-                <!-- Landhi Location -->
-                <div class="express-card">
-                    <img src="./pics/Restaurant Branding.jpg" alt="Landhi Express Branch">
-                    <div class="card-body">
-                        <div class="city-tag">Landhi</div>
-                        <h4><span>United</span> Fastfood</h4>
-                        <div class="contact-info">
-                            <p><i class="fas fa-map-marker-alt"></i> Arwa Heights Building 19 Nishtar Block, Sector E, Landhi Town, Karachi</p>
-                            <p><i class="fas fa-phone"></i> Ph: 0321-111-100-678</p>
-                        </div>
-                        <button class="btn direction-btn">
-                            Get Directions <i class="fas fa-arrow-right"></i>
-                        </button>
-                    </div>
-                </div>
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container" style="display:flex; justify-content:space-between; flex-wrap:wrap;">
+      <div><a href="#" class="navbar__logo">Make Market</a><p style="margin-top:10px;">© 2026 Все права защищены.</p></div>
+      <div class="footer__social">
+        <a href="#"><i class="ri-facebook-fill"></i></a>
+        <a href="#"><i class="ri-instagram-fill"></i></a>
+        <a href="#"><i class="ri-linkedin-fill"></i></a>
+      </div>
+    </div>
+  </footer>
 
-                <!-- Gujar Khan Location -->
-                <div class="express-card">
-                    <img src="./pics/yoad-shejtman-WctPQbz7W3E-unsplash.jpg" alt="Gujar Khan Express Branch">
-                    <div class="card-body">
-                        <div class="city-tag">Gujar Khan</div>
-                        <h4><span>United</span> Express</h4>
-                        <div class="contact-info">
-                            <p><i class="fas fa-map-marker-alt"></i> New Metro City Gujar Khan</p>
-                            <p><i class="fas fa-phone"></i> Ph: 0321-1114962</p>
-                        </div>
-                        <button class="btn direction-btn">
-                            Get Directions <i class="fas fa-arrow-right"></i>
-                        </button>
-                    </div>
-                </div>
+  <script>
+    (function(){
+      "use strict";
+      // Theme toggle
+      const html = document.documentElement;
+      const themeToggle = document.getElementById('themeToggle');
+      const themeIcon = document.getElementById('themeIcon');
+      themeToggle.addEventListener('click', ()=>{
+        const current = html.getAttribute('data-theme');
+        const next = current === 'light' ? 'dark' : 'light';
+        html.setAttribute('data-theme', next);
+        themeIcon.className = next === 'light' ? 'ri-moon-line' : 'ri-sun-line';
+      });
 
-                <!-- Lahore Location -->
-                <div class="express-card">
-                    <img src="./pics/Gemini_Generated_Image_jbcj2qjbcj2qjbcj.png" alt="Lahore Express Branch">
-                    <div class="card-body">
-                        <div class="city-tag">Lahore</div>
-                        <h4><span>United</span> Restaurant</h4>
-                        <div class="contact-info">
-                            <p><i class="fas fa-map-marker-alt"></i> Shop no.5, Arcade Block, Fortress Stadium, Lahore</p>
-                            <p><i class="fas fa-phone"></i> Ph: 042-366-23-100</p>
-                        </div>
-                        <button class="btn direction-btn">
-                            Get Directions <i class="fas fa-arrow-right"></i>
-                        </button>
-                    </div>
-                </div>
+      // Progress bar
+      const progressBar = document.getElementById('progressBar');
+      window.addEventListener('scroll', ()=>{
+        const winScroll = document.documentElement.scrollTop;
+        const height = document.documentElement.scrollHeight - window.innerHeight;
+        progressBar.style.width = height > 0 ? (winScroll / height)*100 + '%' : '0%';
+      });
 
-                <!-- Gujrat Location -->
-                <div class="express-card">
-                    <img src="./pics/Gemini_Generated_Image_yv0n7myv0n7myv0n.png" alt="Gujrat Express Branch">
-                    <div class="card-body">
-                        <div class="city-tag">Gujrat</div>
-                        <h4><span>United</span> Pizza House</h4>
-                        <div class="contact-info">
-                            <p><i class="fas fa-map-marker-alt"></i> Service Mor, Gujrat</p>
-                            <p><i class="fas fa-phone"></i> Ph: 0311-1124600</p>
-                        </div>
-                        <button class="btn direction-btn">
-                            Get Directions <i class="fas fa-arrow-right"></i>
-                        </button>
-                    </div>
-                </div>
+      // Mobile menu
+      const navToggle = document.getElementById('navToggle');
+      const navMenu = document.getElementById('navMenu');
+      navToggle.addEventListener('click', ()=> navMenu.classList.toggle('active'));
 
-                <!-- Sahiwal Location -->
-                <div class="express-card">
-                    <img src="./pics/d6.jpg" alt="Sahiwal Express Branch">
-                    <div class="card-body">
-                        <div class="city-tag">Sahiwal</div>
-                        <h4><span>United</span> Express</h4>
-                        <div class="contact-info">
-                            <p><i class="fas fa-map-marker-alt"></i> Opposite Main Gate Police Line, Sahiwal</p>
-                            <p><i class="fas fa-phone"></i> Ph: 040-4515485</p>
-                        </div>
-                        <button class="btn direction-btn">
-                            Get Directions <i class="fas fa-arrow-right"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+      // Fade sections
+      const faders = document.querySelectorAll('.section-fade');
+      const observer = new IntersectionObserver(entries => entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); }), {threshold:0.15});
+      faders.forEach(el => observer.observe(el));
+      window.addEventListener('load', ()=> faders.forEach(el=>{ if(el.getBoundingClientRect().top < window.innerHeight*0.8) el.classList.add('visible'); }));
 
-    <!-- Village Franchise -->
-    <section class="village-franchise">
-        <div class="container">
-            <div class="section-header">
-                <h1>United Restaurant</h1>
-                <h2>Village Franchise</h2>
-            </div>
-            
-            <div class="village-location">
-                <div class="village-image">
-                    <img src="./pics/downloadd.jpg" alt="Gujranwala Village Franchise">
-                </div>
-                <div class="location-info">
-                    <div class="city-tag">GUJRANWALA</div>
-                    <h3><span>United</span> Village</h3>
-                    <div class="contact-info">
-                        <p><i class="fas fa-map-marker-alt"></i> Adjacent to Rida Marquees /DHA Main Gate, GT Road Gujranwala Cantt</p>
-                        <p><i class="fas fa-phone"></i> Ph: 055-3884500 | 055-3880400</p>
-                    </div>
-                    <button class="btn btn-success direction-btn">
-                        Get Directions <i class="fas fa-arrow-right"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Social Feed -->
-    <section class="social-feed" id="social">
-        <div class="container">
-            <h3 class="section-title">Social Feed</h3>
-            <div class="feed-grid">
-                <div class="feed-item">
-                    <img src="./pics/burger.jpg" alt="United Burger">
-                    <div class="feed-overlay">
-                        <p>Our Signature Burger</p>
-                    </div>
-                </div>
-                <div class="feed-item">
-                    <img src="./pics/socialfood.jpg" alt="United Food Platter">
-                    <div class="feed-overlay">
-                        <p>Traditional Platter</p>
-                    </div>
-                </div>
-                <div class="feed-item">
-                    <img src="./pics/sandwich.jpg" alt="United Sandwich">
-                    <div class="feed-overlay">
-                        <p>Gourmet Sandwiches</p>
-                    </div>
-                </div>
-                <div class="feed-item">
-                    <img src="./pics/bbq.jpg" alt="United BBQ">
-                    <div class="feed-overlay">
-                        <p>Authentic BBQ</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="main-footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-section about">
-                    <h1 style="color: var(--primary-color); margin: 0; font-size: 2rem;">UNITED</h1>
-                    <p>United Restaurants are an example of gracious dining, outstanding service, extraordinary classic and contemporary cuisine. The restaurants have become the ultimate dining destinations in Pakistan.</p>
-                    <div class="footer-links">
-                        <a href="#">Terms & conditions</a>
-                        <a href="#">Privacy policy</a>
-                    </div>
-                </div>
-                
-                <div class="footer-section links">
-                    <h4>Site Links</h4>
-                    <ul>
-                        <li><a href="#home">Home</a></li>
-                        <li><a href="#about">About Us</a></li>
-                        <li><a href="#brands">Our Brands</a></li>
-                        <li><a href="#locations">Locations</a></li>
-                        <li><a href="#publications">Publications</a></li>
-                        <li><a href="#social">Social Feed</a></li>
-                        <li><a href="#">Get a Franchise</a></li>
-                        <li><a href="#">Feedback</a></li>
-                    </ul>
-                </div>
-                
-                <div class="footer-section contact">
-                    <h4>Contact Us</h4>
-                    <div class="contact-info">
-                        <h5>Head office Address</h5>
-                        <p>Foodconsults (Pvt) Ltd<br>23-Usman Block, New GardenTown, Lahore, Pakistan</p>
-                        
-                        <h5>Head office number</h5>
-                        <p>+92 42 358 509 31<br>+92 42 358 509 30</p>
-                        
-                        <h5>Email Address</h5>
-                        <p>unitedfood@brain.net.pk</p>
-                        
-                        <h5>Free delivery number</h5>
-                        <p>+92 42 111 100 678<br>+92 03 111 444 610</p>
-                    </div>
-                </div>
-                
-                <div class="footer-section social">
-                    <h4>Follow Us</h4>
-                    <div class="social-icons">
-                        <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                        <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
-                        <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
-                    </div>
-                    <div class="newsletter">
-                        <h5>Subscribe to our Newsletter</h5>
-                        <form class="newsletter-form">
-                            <input type="email" placeholder="Your email address" required>
-                            <button type="submit">Subscribe</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="footer-bottom">
-                <p>&copy; 2025 United Restaurants. All rights reserved.</p>
-            </div>
-        </div>
-    </footer>
-
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // app.js - Main JavaScript file for United Restaurant website
-
-        document.addEventListener('DOMContentLoaded', function() {
-            // Initialize all functionality
-            initSlider();
-            initMobileMenu();
-            initSmoothScrolling();
-            initScrollAnimations();
-            initNewsletter();
+      // Magnetic buttons
+      const magnets = document.querySelectorAll('.magnetic');
+      magnets.forEach(btn => {
+        btn.addEventListener('mousemove', (e) => {
+          const rect = btn.getBoundingClientRect();
+          const x = e.clientX - rect.left - rect.width/2;
+          const y = e.clientY - rect.top - rect.height/2;
+          btn.style.transform = `translate(${x*0.15}px, ${y*0.15}px)`;
         });
+        btn.addEventListener('mouseleave', ()=> btn.style.transform = 'translate(0,0)');
+      });
 
-        // Hero Slider Functionality
-        function initSlider() {
-            const slider = document.querySelector('.slider');
-            const slides = document.querySelectorAll('.slide');
-            const dots = document.querySelectorAll('.slider-dot');
-            const prevBtn = document.querySelector('.slider-arrow.prev');
-            const nextBtn = document.querySelector('.slider-arrow.next');
-            
-            if (!slider || !slides.length) return;
-            
-            let currentSlide = 0;
-            const slideCount = slides.length;
-            let slideInterval;
+      // Parallax mockups (mouse move)
+      const mockupContainer = document.getElementById('mockupParallax');
+      if(mockupContainer) {
+        document.addEventListener('mousemove', (e) => {
+          const x = (e.clientX / window.innerWidth - 0.5) * 20;
+          const y = (e.clientY / window.innerHeight - 0.5) * 20;
+          mockupContainer.style.transform = `translate(${x}px, ${y}px)`;
+        });
+      }
 
-            // Function to update slider position
-            function updateSlider() {
-                slider.style.transform = `translateX(-${currentSlide * 100}%)`;
-                
-                // Update active dot
-                dots.forEach((dot, index) => {
-                    dot.classList.toggle('active', index === currentSlide);
-                });
-            }
+      // FAQ Accordion
+      document.querySelectorAll('.accordion__header').forEach(header => {
+        header.addEventListener('click', ()=>{
+          const item = header.closest('.accordion__item');
+          item.classList.toggle('active');
+        });
+      });
 
-            // Next slide function
-            function nextSlide() {
-                currentSlide = (currentSlide + 1) % slideCount;
-                updateSlider();
-            }
-
-            // Previous slide function
-            function prevSlide() {
-                currentSlide = (currentSlide - 1 + slideCount) % slideCount;
-                updateSlider();
-            }
-
-            // Auto slide every 5 seconds
-            function startAutoSlide() {
-                slideInterval = setInterval(nextSlide, 5000);
-            }
-
-            // Stop auto slide
-            function stopAutoSlide() {
-                clearInterval(slideInterval);
-            }
-
-            // Event listeners for slider controls
-            if (nextBtn) {
-                nextBtn.addEventListener('click', function() {
-                    stopAutoSlide();
-                    nextSlide();
-                    startAutoSlide();
-                });
-            }
-
-            if (prevBtn) {
-                prevBtn.addEventListener('click', function() {
-                    stopAutoSlide();
-                    prevSlide();
-                    startAutoSlide();
-                });
-            }
-
-            // Dot navigation
-            dots.forEach((dot, index) => {
-                dot.addEventListener('click', function() {
-                    stopAutoSlide();
-                    currentSlide = index;
-                    updateSlider();
-                    startAutoSlide();
-                });
-            });
-
-            // Pause on hover
-            const sliderContainer = document.querySelector('.slider-container');
-            if (sliderContainer) {
-                sliderContainer.addEventListener('mouseenter', stopAutoSlide);
-                sliderContainer.addEventListener('mouseleave', startAutoSlide);
-            }
-
-            // Start the slider
-            startAutoSlide();
-        }
-
-        // Mobile Menu Functionality
-        function initMobileMenu() {
-            const menuToggle = document.querySelector('.menu-toggle');
-            const mainNav = document.querySelector('.main-nav');
-            
-            if (!menuToggle || !mainNav) return;
-
-            menuToggle.addEventListener('click', function() {
-                mainNav.classList.toggle('active');
-                menuToggle.innerHTML = mainNav.classList.contains('active') 
-                    ? '<i class="fas fa-times"></i>' 
-                    : '<i class="fas fa-bars"></i>';
-            });
-
-            // Close mobile menu when clicking on a link
-            document.querySelectorAll('.main-nav a').forEach(link => {
-                link.addEventListener('click', function() {
-                    if (mainNav.classList.contains('active')) {
-                        mainNav.classList.remove('active');
-                        menuToggle.innerHTML = '<i class="fas fa-bars"></i>';
-                    }
-                });
-            });
-        }
-
-        // Smooth Scrolling for Anchor Links
-        function initSmoothScrolling() {
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    
-                    const targetId = this.getAttribute('href');
-                    if (targetId === '#') return;
-                    
-                    const targetElement = document.querySelector(targetId);
-                    if (targetElement) {
-                        window.scrollTo({
-                            top: targetElement.offsetTop - 100,
-                            behavior: 'smooth'
-                        });
-                    }
-                });
-            });
-        }
-
-        // Scroll Animations
-        function initScrollAnimations() {
-            const animateOnScroll = function() {
-                const elements = document.querySelectorAll('.brand-card, .location-card, .express-card, .feed-item');
-                
-                elements.forEach(element => {
-                    const elementPosition = element.getBoundingClientRect().top;
-                    const screenPosition = window.innerHeight / 1.2;
-                    
-                    if (elementPosition < screenPosition) {
-                        element.style.opacity = '1';
-                        element.style.transform = 'translateY(0)';
-                    }
-                });
-            };
-
-            // Set initial state for animated elements
-            const animatedElements = document.querySelectorAll('.brand-card, .location-card, .express-card, .feed-item');
-            animatedElements.forEach(element => {
-                element.style.opacity = '0';
-                element.style.transform = 'translateY(20px)';
-                element.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
-            });
-
-            window.addEventListener('scroll', animateOnScroll);
-            animateOnScroll(); // Run once on page load
-        }
-
-        // Newsletter Form Submission
-        function initNewsletter() {
-            const newsletterForm = document.querySelector('.newsletter-form');
-            if (!newsletterForm) return;
-
-            newsletterForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                const email = this.querySelector('input[type="email"]').value;
-                
-                // In a real application, you would send this to a server
-                alert(`Thank you for subscribing with ${email}! You'll receive our latest updates soon.`);
-                this.reset();
-            });
-        }
-    </script>
+      // Smooth scroll
+      document.querySelectorAll('a[href^="#"]').forEach(link => {
+        link.addEventListener('click', function(e) {
+          const href = this.getAttribute('href');
+          if(href==="#") return;
+          const target = document.querySelector(href);
+          if(target) {
+            e.preventDefault();
+            target.scrollIntoView({behavior:'smooth'});
+            navMenu.classList.remove('active');
+          }
+        });
+      });
+    })();
+  </script>
 </body>
 </html>
